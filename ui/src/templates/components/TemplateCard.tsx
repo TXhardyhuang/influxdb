@@ -7,7 +7,7 @@ import {withRouter, WithRouterProps} from 'react-router'
 import {ResourceList, Context, IconFont} from 'src/clockface'
 
 // Actions
-import {deleteTemplate} from 'src/templates/actions'
+import {deleteTemplate, updateTemplate} from 'src/templates/actions'
 
 // Types
 import {TemplateSummary} from '@influxdata/influx'
@@ -23,6 +23,7 @@ interface OwnProps {
 
 interface DispatchProps {
   onDelete: typeof deleteTemplate
+  onUpdate: typeof updateTemplate
 }
 
 type Props = DispatchProps & OwnProps
@@ -38,7 +39,7 @@ export class TemplateCard extends PureComponent<Props & WithRouterProps> {
         name={() => (
           <ResourceList.Name
             onClick={this.handleNameClick}
-            onUpdate={this.doNothing}
+            onUpdate={this.handleUpdateTemplate}
             name={template.meta.name}
             noNameString={DEFAULT_TEMPLATE_NAME}
             parentTestID="template-card--name"
@@ -50,8 +51,14 @@ export class TemplateCard extends PureComponent<Props & WithRouterProps> {
     )
   }
 
-  //TODO handle rename template
-  private doNothing = () => {}
+  private handleUpdateTemplate = (name: string) => {
+    const {template} = this.props
+
+    this.props.onUpdate(template.id, {
+      ...template,
+      meta: {...template.meta, name},
+    })
+  }
 
   private get contextMenu(): JSX.Element {
     const {
@@ -93,6 +100,7 @@ export class TemplateCard extends PureComponent<Props & WithRouterProps> {
 
 const mdtp: DispatchProps = {
   onDelete: deleteTemplate,
+  onUpdate: updateTemplate,
 }
 
 export default connect<{}, DispatchProps, OwnProps>(

@@ -22,6 +22,7 @@ export enum ActionTypes {
   SetTemplatesStatus = 'SET_TEMPLATES_STATUS',
   SetExportTemplate = 'SET_EXPORT_TEMPLATE',
   RemoveTemplateSummary = 'REMOVE_TEMPLATE_SUMMARY',
+  SetTemplateSummary = 'SET_TEMPLATE_SUMMARY',
 }
 
 export type Actions =
@@ -29,6 +30,7 @@ export type Actions =
   | SetTemplatesStatus
   | SetExportTemplate
   | RemoveTemplateSummary
+  | SetTemplateSummary
 
 export interface PopulateTemplateSummaries {
   type: ActionTypes.PopulateTemplateSummaries
@@ -81,6 +83,33 @@ export const createTemplate = (template: DocumentCreate) => async dispatch => {
   } catch (e) {
     console.error(e)
     dispatch(notify(copy.importTemplateFailed(e)))
+  }
+}
+
+interface SetTemplateSummary {
+  type: ActionTypes.SetTemplateSummary
+  payload: {id: string; templateSummary: TemplateSummary}
+}
+
+export const setTemplateSummary = (
+  id: string,
+  templateSummary: TemplateSummary
+): SetTemplateSummary => ({
+  type: ActionTypes.SetTemplateSummary,
+  payload: {id, templateSummary},
+})
+
+export const updateTemplate = (id: string, props: TemplateSummary) => async (
+  dispatch
+): Promise<void> => {
+  try {
+    const {meta} = await client.templates.update(id, props)
+
+    dispatch(setTemplateSummary(id, {...props, meta}))
+    dispatch(notify(copy.updateTemplateSucceeded()))
+  } catch (e) {
+    console.error(e)
+    dispatch(notify(copy.updateTemplateFailed(e)))
   }
 }
 
