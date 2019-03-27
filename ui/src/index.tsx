@@ -53,6 +53,7 @@ import OrgTemplatesIndex from 'src/organizations/containers/OrgTemplatesIndex'
 import TemplateExportOverlay from 'src/templates/components/TemplateExportOverlay'
 import TemplateImportOverlay from 'src/templates/components/TemplateImportOverlay'
 import CreateOrgOverlay from './organizations/components/CreateOrgOverlay'
+import VariableImportOverlay from 'src/variables/components/VariableImportOverlay'
 
 import OnboardingWizardPage from 'src/onboarding/containers/OnboardingWizardPage'
 
@@ -167,7 +168,12 @@ class Root extends PureComponent {
                             <Route
                               path="variables"
                               component={OrgVariablesIndex}
-                            />
+                            >
+                              <Route
+                                path="import"
+                                component={VariableImportOverlay}
+                              />
+                            </Route>
                             <Route
                               path="scrapers"
                               component={OrgScrapersIndex}

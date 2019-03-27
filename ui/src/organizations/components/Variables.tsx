@@ -2,6 +2,7 @@
 import React, {PureComponent, ChangeEvent} from 'react'
 import _ from 'lodash'
 import {connect} from 'react-redux'
+import {withRouter, WithRouterProps} from 'react-router'
 
 // Utils
 import {getVariablesForOrg} from 'src/variables/selectors'
@@ -39,7 +40,7 @@ interface DispatchProps {
   onDeleteVariable: typeof deleteVariable
 }
 
-interface OwnProps {
+interface OwnProps extends WithRouterProps{
   org: Organization
 }
 
@@ -67,7 +68,7 @@ class Variables extends PureComponent<Props, State> {
   }
 
   public render() {
-    const {variables, variablesStatus, org} = this.props
+    const {variables, variablesStatus, org, children} = this.props
     const {searchTerm, createOverlayState} = this.state
 
     if (variablesStatus !== RemoteDataState.Done) {
@@ -113,6 +114,7 @@ class Variables extends PureComponent<Props, State> {
             orgID={org.id}
           />
         </Overlay>
+        {children}
       </>
     )
   }
@@ -153,7 +155,11 @@ class Variables extends PureComponent<Props, State> {
 
   private handleFilterBlur() {}
 
-  private handleOpenImportOverlay = (): void => {}
+  private handleOpenImportOverlay = (): void => {
+    const {router} = this.props
+
+    router.push('variables/import')
+  }
 
   private handleOpenCreateOverlay = (): void => {
     this.setState({createOverlayState: OverlayState.Open})
@@ -202,4 +208,4 @@ const mdtp = {
 export default connect<StateProps, DispatchProps, OwnProps>(
   mstp,
   mdtp
-)(Variables)
+)(withRouter<OwnProps>(Variables))
